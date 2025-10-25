@@ -2,6 +2,11 @@ from google import genai
 from pydantic import BaseModel
 from datetime import date
 import enum
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 class Category(enum.Enum):
     GROCERY = "Grocery"
@@ -17,7 +22,12 @@ class Receipt(BaseModel):
     total_amount: float
     date: date
 
-client = genai.Client()
+# Initialize Gemini client with API key from environment
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("GEMINI_API_KEY not found in environment variables")
+
+client = genai.Client(api_key=api_key)
 
 def analyze_receipt(text: str):
     response = client.models.generate_content(

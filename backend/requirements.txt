@@ -8,3 +8,4 @@ google-genai==1.46.0
 gunicorn==23.0.0
 numpy<2.3.0
 scipy>=1.10.0
+python-dotenv==1.0.1
