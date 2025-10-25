@@ -43,7 +43,7 @@ export default function ScannerPage() {
       setUploading(true)
       const photo = await cameraRef.current.takePictureAsync({ base64: true })
 
-      const response = await fetch('https://example.com/api/upload', {
+      const response = await fetch('http://127.0.0.1:6000/api/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: photo.base64 }),
