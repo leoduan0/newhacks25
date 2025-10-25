@@ -1,62 +1,12 @@
 from supabase import create_client, Client
 from datetime import datetime
-import os
 
-import psycopg2
-from dotenv import load_dotenv
-import os
+SUPABASE_URL = 'https://nanozurrlzthldwtxjwd.supabase.co'
+SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hbm96dXJybHp0aGxkd3R4andkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEzNzYwMDksImV4cCI6MjA3Njk1MjAwOX0.en43MD9oK3WUjJx8BOtbysgkZW4b0aStEYsdOxA8FeE'
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Load environment variables from .env
-load_dotenv()
-
-# Fetch variables
-USER = os.getenv("user")
-PASSWORD = os.getenv("password")
-HOST = os.getenv("host")
-PORT = os.getenv("port")
-DBNAME = os.getenv("dbname")
-
-# Connect to the database
-try:
-    connection = psycopg2.connect(
-        user=USER,
-        password=PASSWORD,
-        host=HOST,
-        port=PORT,
-        dbname=DBNAME
-    )
-    print("Connection successful!")
-
-    # Create a cursor to execute SQL queries
-    cursor = connection.cursor()
-
-    # Example query
-    cursor.execute("SELECT NOW();")
-    result = cursor.fetchone()
-    print("Current Time:", result)
-
-    # Close the cursor and connection
-    cursor.close()
-    connection.close()
-    print("Connection closed.")
-
-except Exception as e:
-    print(f"Failed to connect: {e}")
-
-url: str = os.environ.get("SUPABASE_URL")
-key: str = os.environ.get("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
 
 def insert_receipt(store_name, items, purchase_date=None):
-    """
-    Insert a receipt with multiple items
-
-    items: list of dicts with 'name', 'quantity', 'price'
-    Example: [
-        {'name': 'Apple', 'quantity': 3, 'price': 1.50},
-        {'name': 'Bread', 'quantity': 1, 'price': 2.99}
-    ]
-    """
     try:
         # Calculate total
         total = sum(item['quantity'] * item['price'] for item in items)
@@ -64,8 +14,8 @@ def insert_receipt(store_name, items, purchase_date=None):
         # Insert receipt
         receipt_data = {
             'store_name': store_name,
-            'total': total,
-            'date': purchase_date or datetime.now().isoformat()
+            'total_amount': total,
+            'purchase_date': purchase_date or datetime.now().isoformat()
         }
         receipt_response = supabase.table('receipts').insert(receipt_data).execute()
         receipt_id = receipt_response.data[0]['id']
@@ -87,18 +37,18 @@ def insert_receipt(store_name, items, purchase_date=None):
             'receipt_id': receipt_id,
             'items': items_response.data
         }
-
     except Exception as e:
         print(f"Error inserting receipt: {e}")
         return None
 
 
-# Usage
-items = [
-    {'name': 'Milk', 'quantity': 2, 'price': 3.99},
-    {'name': 'Eggs', 'quantity': 1, 'price': 4.50},
-    {'name': 'Bread', 'quantity': 1, 'price': 2.99}
-]
+def get_receipt(receipt_id):    # Get receipt
+    receipt = supabase.table('receipts').select("*").eq('id', receipt_id).execute()
 
-result = insert_receipt('Walmart', items)
-print(result)
+    # Get items for this receipt
+    items = supabase.table('receipt_items').select("*").eq('receipt_id', receipt_id).execute()
+
+    return {
+        'receipt': receipt.data[0] if receipt.data else None,
+        'items': items.data
+    }
