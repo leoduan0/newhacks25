@@ -43,7 +43,7 @@ export default function ScannerPage() {
       setUploading(true)
       const photo = await cameraRef.current.takePictureAsync({ base64: true })
 
-      const response = await fetch('https://newhacks25.onrender.com/scan', {
+      const response = await fetch('https://newhacks25-as2x.onrender.com/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: photo.base64 }),
