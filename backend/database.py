@@ -1,9 +1,11 @@
 from supabase import create_client, Client
 from datetime import datetime
+import os
 
-SUPABASE_URL = "https://nanozurrlzthldwtxjwd.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hbm96dXJybHp0aGxkd3R4andkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEzNzYwMDksImV4cCI6MjA3Njk1MjAwOX0.en43MD9oK3WUjJx8BOtbysgkZW4b0aStEYsdOxA8FeE"
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 
 
 def insert_receipt(store_name, items, purchase_date=None):
