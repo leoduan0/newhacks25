@@ -4,6 +4,20 @@ import imutils
 import cv2
 import re
 import numpy as np
+import os
+
+# Configure pytesseract to find tesseract executable
+# Check common installation paths
+tesseract_paths = [
+    '/opt/homebrew/bin/tesseract',  # Homebrew ARM Mac
+    '/usr/local/bin/tesseract',      # Homebrew Intel Mac
+    '/opt/anaconda3/bin/tesseract',  # Conda
+]
+
+for path in tesseract_paths:
+    if os.path.exists(path):
+        pytesseract.pytesseract.tesseract_cmd = path
+        break
 
 
 def scan_receipt(image_bytes):
