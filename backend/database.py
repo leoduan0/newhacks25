@@ -2,7 +2,9 @@ from supabase import create_client, Client
 from datetime import datetime
 import os
 import json
+from dotenv import load_dotenv
 
+load_dotenv()
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 
 def get_highest_id():
@@ -16,17 +18,13 @@ def get_highest_id():
         return -1
 
 
-def insert_receipt(merchant_name: str, items: list[tuple[str, float]], receipt_type: str, purchase_date=None):
+def insert_receipt(receipt_type: str, merchant_name: str, items: list[tuple[str, float]], total_amount: float, purchase_date=None):
     """
     Sample Input
 
-    "Walmart", [{"name": "Apple", "category": 1, "price": 3}], "13"
+    "Walmart", [("Apple", 3.0)], "TRAVEL"
     """
     try:
-        total_amount = 0
-        for item in items:
-            total_amount += item[1]
-
         row_data = {
             "id": get_highest_id() + 1,
             "type": receipt_type,
@@ -46,18 +44,19 @@ def insert_receipt(merchant_name: str, items: list[tuple[str, float]], receipt_t
     return None
 
 
-def get_receipt(receipt_id):  # Get receipt
-    receipt = supabase.table("records").select("*").eq("id", receipt_id).execute()
+def get_row_by_id(row_id: str):
+    try:
+        response = supabase.table("records").select("*").eq("id", row_id).execute()
 
-    # Get items for this receipt
-    items = (
-        supabase.table("receipt_items")
-        .select("*")
-        .eq("receipt_id", receipt_id)
-        .execute()
-    )
+        # Check if data exists
+        if response.data:
+            return response.data[0]  # Returns the first (and should be only) matching row
+        else:
+            return None
 
-    return {"receipt": receipt.data[0] if receipt.data else None, "items": items.data}
+    except Exception as e:
+        print(f"Error retrieving data: {e}")
+        return None
 
 
 def load_from_json(json_text: str):
@@ -66,5 +65,6 @@ def load_from_json(json_text: str):
         merchant_name=formatted["merchant_name"], 
         items=formatted["items"],
         receipt_type=formatted["type"],
+        total_amount=formatted["total_amount"],
         purchase_date=formatted["date"]
     )
