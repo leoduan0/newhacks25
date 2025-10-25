@@ -3,6 +3,7 @@ from flask_cors import CORS
 import base64
 import os
 from datetime import datetime
+import ocr
 
 app = Flask(__name__)
 CORS(app)
@@ -20,8 +21,7 @@ def scan():
         print(f"Received image data at {datetime.now()}")
 
         image_bytes = base64.b64decode(image_base64)
-
-        # add other image processing stuff here
+        ocr.scan_receipt(image_bytes)
 
         return (
             jsonify(
