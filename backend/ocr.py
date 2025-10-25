@@ -1,10 +1,10 @@
 from imutils.perspective import four_point_transform
 import pytesseract
-import argparse
 import imutils
 import cv2
 import re
 import numpy as np
+
 
 def scan_receipt(image_bytes):
     orig = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
@@ -19,7 +19,7 @@ def scan_receipt(image_bytes):
     cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
-    
+
     # initialize a contour that corresponds to the receipt outline
     receiptCnt = None
     # loop over the contours
@@ -40,23 +40,24 @@ def scan_receipt(image_bytes):
     except:
         print("Error: Could not recognize receipt edges")
         exit()
-        
+
     # show transformed image
     cv2.imshow("Receipt Transform", imutils.resize(receipt, width=500))
     cv2.waitKey(0)
 
     options = "--psm 4"
-    text = pytesseract.image_to_string(cv2.cvtColor(receipt, cv2.COLOR_BGR2RGB), config=options)
+    text = pytesseract.image_to_string(
+        cv2.cvtColor(receipt, cv2.COLOR_BGR2RGB), config=options
+    )
     print(text)
 
     # define a regular expression that will match line items that include
     # a price component
-    pricePattern = r'([0-9]+\.[0-9]+)'
-    totalPattern = r'(tot|due|bal).+([0-9]+\.[0-9]+)'
+    pricePattern = r"([0-9]+\.[0-9]+)"
+    totalPattern = r"(tot|due|bal).+([0-9]+\.[0-9]+)"
     name = text.split("\n")[0]
     total = ""
     items = []
-
 
     # show the output of filtering out *only* the line items in the
     # receipt
@@ -68,7 +69,7 @@ def scan_receipt(image_bytes):
         # row
         if re.search(pricePattern, row) is not None:
             if re.search(totalPattern, row) is not None:
-                total = (row.split(" ")[-1])
+                total = row.split(" ")[-1]
             else:
                 items.append(row)
 
