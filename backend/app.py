@@ -14,13 +14,14 @@ def scan():
         data = request.get_json()
 
         if not data or "image" not in data:
-            return jsonify({"error": "No image data provided"}), 400
+            return jsonify({"success": False, "error": "No image data provided"}), 400
 
         image_base64 = data["image"]
         print(f"Received image data at {datetime.now()}")
 
-        # Process image here (note: no file storage on free tier)
-        # Use cloud storage (S3, Cloudinary) for persistence
+        image_bytes = base64.b64decode(image_base64)
+
+        # add other image processing stuff here
 
         return (
             jsonify(
