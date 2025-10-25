@@ -4,6 +4,7 @@ import base64
 import os
 from datetime import datetime
 import ocr
+import gemini
 
 app = Flask(__name__)
 CORS(app)
@@ -21,7 +22,9 @@ def scan():
         print(f"Received image data at {datetime.now()}")
 
         image_bytes = base64.b64decode(image_base64)
-        ocr.scan_receipt(image_bytes)
+        receipt_data = ocr.scan_receipt(image_bytes)
+        interpreted_receipt = gemini.analyze_receipt(receipt_data)
+        
 
         return (
             jsonify(
