@@ -20,6 +20,7 @@ class Receipt(BaseModel):
     merchant_name: str
     items: list[tuple[str, float]]
     total_amount: float
+    date: date
 
 # Initialize Gemini client with API key from environment
 api_key = os.getenv("GEMINI_API_KEY")
