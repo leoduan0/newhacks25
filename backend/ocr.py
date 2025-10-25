@@ -42,15 +42,14 @@ def scan_receipt(image_bytes):
         exit()
 
     # show transformed image
-    cv2.imshow("Receipt Transform", imutils.resize(receipt, width=500))
-    cv2.waitKey(0)
+    #cv2.imshow("Receipt Transform", imutils.resize(receipt, width=500))
+    #cv2.waitKey(0)
 
     options = "--psm 4"
     text = pytesseract.image_to_string(
         cv2.cvtColor(receipt, cv2.COLOR_BGR2RGB), config=options
     )
-    print(text)
-
+    
     # define a regular expression that will match line items that include
     # a price component
     pricePattern = r"([0-9]+\.[0-9]+)"
@@ -76,3 +75,5 @@ def scan_receipt(image_bytes):
     print(name)
     print(items)
     print(f"Total: {total}")
+    
+    return text
