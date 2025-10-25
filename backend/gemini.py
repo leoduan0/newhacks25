@@ -15,7 +15,7 @@ class Receipt(BaseModel):
     merchant_name: str
     items: list[tuple[str, float]]
     total_amount: float
-    date: str
+    date: date
 
 client = genai.Client()
 
