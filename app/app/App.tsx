@@ -1,15 +1,15 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Log from './(tabs)/log';
-import TransactionDetail from './(tabs)/transactiondetails';
+import Log from './(tabs)/log'
+import TransactionDetail from './(tabs)/transactiondetails'
+import { NavigationContainer } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import React from 'react'
 
 export type RootStackParamList = {
-  Log: undefined;
-  TransactionDetail: { transaction: any }; // could type this more strictly
-};
+  Log: undefined
+  TransactionDetail: { transaction: any } // could type this more strictly
+}
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export default function App() {
   return (
@@ -27,12 +27,8 @@ export default function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
-  );
+  )
 }
-
-
-
-
 
 // import React from 'react';
 // import { NavigationContainer } from '@react-navigation/native';

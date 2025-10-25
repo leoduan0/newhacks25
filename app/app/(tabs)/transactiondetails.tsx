@@ -1,18 +1,20 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, ScrollView } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router'
+import React from 'react'
+import { View, Text, FlatList, StyleSheet, ScrollView } from 'react-native'
 
 export default function TransactionDetail() {
-  const params = useLocalSearchParams();
+  const params = useLocalSearchParams()
   // transaction is passed as a string, parse it
-  const transaction = params.transaction ? JSON.parse(params.transaction as string) : null;
+  const transaction = params.transaction
+    ? JSON.parse(params.transaction as string)
+    : null
 
   if (!transaction) {
     return (
       <View style={styles.container}>
         <Text>No transaction data!</Text>
       </View>
-    );
+    )
   }
 
   return (
@@ -41,7 +43,7 @@ export default function TransactionDetail() {
         />
       </View>
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -100,11 +102,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#e76f51',
   },
-});
-
-
-
-
+})
 
 // import React from 'react';
 // import { View, Text, FlatList, StyleSheet } from 'react-native';
@@ -156,10 +154,6 @@ const styles = StyleSheet.create({
 //   item: { fontSize: 16, marginLeft: 8 },
 // });
 
-
-
-
-
 // import React from 'react';
 // import { View, Text, FlatList, StyleSheet } from 'react-native';
 
@@ -198,11 +192,6 @@ const styles = StyleSheet.create({
 //   itemsHeader: { fontSize: 18, fontWeight: '600', marginTop: 8 },
 //   item: { fontSize: 16, marginLeft: 8 },
 // });
-
-
-
-
-
 
 // import React from 'react';
 // import { View, Text, StyleSheet, FlatList } from 'react-native';
