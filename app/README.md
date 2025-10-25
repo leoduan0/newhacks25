@@ -3,9 +3,8 @@
 ## Install
 
 1. Install [Homebrew](https://brew.sh)
-1. Install packages via `brew install cocoapods node ruby watchman`
-1. Configure yarn via `npm install -g yarn`
-1. Run `fish_add_path /opt/homebrew/opt/ruby/bin`
+1. Install packages via `brew install cocoapods node ruby watchman yarn`
+1. Run `export PATH="/opt/homebrew/opt/ruby/bin:$PATH"`
 
 ## Run
 

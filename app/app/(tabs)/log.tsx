@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
+import React from 'react'
 import {
   View,
   Text,
@@ -40,7 +40,7 @@ const mockLogs = [
 export default function Log() {
   const router = useRouter()
 
-  const renderItem = React.memo({ item }: { item: (typeof mockLogs)[0] }) => {
+  const RenderItem = React.memo(({ item }) => {
     const scale = new Animated.Value(1)
 
     const onPressIn = () => {
@@ -85,14 +85,14 @@ export default function Log() {
         </TouchableOpacity>
       </Animated.View>
     )
-  }
+  })
 
   return (
     <View style={styles.container}>
       <FlatList
         data={mockLogs}
         keyExtractor={(item) => item.id}
-        renderItem={renderItem}
+        renderItem={({ item }) => <RenderItem item={item} />}
         contentContainerStyle={{ paddingBottom: 20 }}
       />
     </View>
