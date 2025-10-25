@@ -24,14 +24,12 @@ def analyze_receipt(text: str):
         model="gemini-2.5-flash",
         contents=[f"This is text from a receipt. Evaluate what kind of purchase this is, \
             provide the merchant name, generate a list comprised of all individual items and their prices in tuples, \
-                the total balance due, and receipt date", str]
+                the total balance due, and receipt date", str],
         config = {
-            "response_mime_type": "application/json"
-            "response_schema": Receipt
-            "propertyOrdering": ["type", "merchant_name", "items", "total_amount", "date"]
-        }
-        
-    )
+            "response_mime_type": "application/json",
+            "response_schema": Receipt,
+            "propertyOrdering": ["type", "merchant_name", "items", "total_amount", "date"],
+        })
 
     print(response.text)
     my_receipts: Receipt = response.parsed
