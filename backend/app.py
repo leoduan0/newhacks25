@@ -30,6 +30,7 @@ else:
 
 import ocr
 import gemini
+import database
 
 app = Flask(__name__)
 CORS(app)
@@ -49,7 +50,7 @@ def scan():
         image_bytes = base64.b64decode(image_base64)
         receipt_data = ocr.scan_receipt(image_bytes)
         interpreted_receipt = gemini.analyze_receipt(receipt_data)
-        
+        database.insert_data(interpreted_receipt)
 
         return (
             jsonify(

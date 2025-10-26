@@ -21,19 +21,48 @@ def load_from_json(json_text: str):
 
 
 def get_id(table_name: str):
-    new_id = uuid.uuid1()
+    new_id = str(uuid.uuid1())
     response = supabase.table(table_name).select("id").eq("id", new_id).execute()
 
     if len(response.data) > 0:
-        new_id = uuid.uuid1()
+        new_id = str(uuid.uuid1())
 
     return new_id
 
-
-def insert_data(receipt_type: str, merchant_name: str, items: list, total_amount: float, purchase_date=None) -> dict:
+def insert_data(receipt_data) -> dict:
+    # Convert Pydantic model to dict if needed
+    if hasattr(receipt_data, 'model_dump'):
+        receipt_dict = receipt_data.model_dump()
+    elif hasattr(receipt_data, 'dict'):
+        receipt_dict = receipt_data.dict()
+    else:
+        receipt_dict = receipt_data
+    
     receipt_id = get_id("records")
+    
+    # Convert enum to string value if needed
+    category = receipt_dict["receipt_type"]
+    if hasattr(category, 'value'):
+        category = category.value
 
-    for item in items:
+    # First, insert the record so it exists for foreign key constraints
+    records = {
+        "id": receipt_id,
+        "store": receipt_dict["merchant_name"],
+        "category": category,
+        "image_url": "",
+        "address": receipt_dict["merchant_address"],
+        "phone": receipt_dict["merchant_phone"],
+        "notes": "",
+        "purchase_date": str(receipt_dict["purchase_date"]),
+        "created_at": str(datetime.now().isoformat()),
+        "updated_at": str(datetime.now().isoformat()),
+        "user_id": "dc5b034a-d418-4e3f-8069-e7bb21550870",
+    }
+    supabase.table("records").insert(records).execute()
+
+    # Then insert items and create relationships
+    for item in receipt_dict["items"]:
         item_id = get_id("items")
         item_dict = {
             "id": item_id,
@@ -41,24 +70,10 @@ def insert_data(receipt_type: str, merchant_name: str, items: list, total_amount
             "cost": item["price"],
             "created_at": str(datetime.now().isoformat()),
             "updated_at": str(datetime.now().isoformat()),
-            "userId": "dc5b034a-d418-4e3f-8069-e7bb21550870",
+            "user_id": "dc5b034a-d418-4e3f-8069-e7bb21550870",
         }
         supabase.table("items").insert(item_dict).execute()
         supabase.table("_TransactionItems").insert({'A': item_id, 'B': receipt_id}).execute()
-
-    records = {
-        "id": receipt_id,
-        "store": merchant_name,
-        "category": receipt_type,
-        "imageUrl": "",
-        "address": "",
-        "phone": "",
-        "notes": "",
-        "createdAt": str(datetime.now().isoformat()),
-        "updatedAt": str(datetime.now().isoformat()),
-        "userId": "dc5b034a-d418-4e3f-8069-e7bb21550870",
-    }
-    supabase.table("records").insert(records).execute()
 
 
 def get_row_by_id(row_id: str):
