@@ -1,6 +1,16 @@
-import { useRouter } from 'expo-router';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import React from 'react'
+import {
+  Animated,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
+// Mock data without hardcoded total
 const mockLogs = [
   {
     id: '1',
@@ -22,59 +32,106 @@ const mockLogs = [
       { name: 'Apples', price: 4.5 },
     ],
   },
-];
+]
 
 export default function Log() {
-  const router = useRouter();
+  const router = useRouter()
 
-  const renderItem = ({ item }: { item: typeof mockLogs[0] }) => {
+  const RenderItem = React.memo(({ item }) => {
+    const scale = new Animated.Value(1)
+
+    const onPressIn = () => {
+      Animated.spring(scale, { toValue: 0.97, useNativeDriver: true }).start()
+    }
+    const onPressOut = () => {
+      Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start()
+    }
+
+    // calculate total dynamically
+    const total = item.items.reduce((sum, i) => sum + i.price, 0)
+
     return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() =>
-          router.push({
-            pathname: '/transactiondetails',
-            params: { transaction: JSON.stringify(item) },
-          })
-        }
-      >
-        <Text style={styles.store}>{item.store}</Text>
-        <Text style={styles.category}>{item.category}</Text>
-        <Text style={styles.date}>{item.date}</Text>
-        <Text style={styles.total}>Total: ${item.items.reduce((sum, i) => sum + i.price, 0).toFixed(2)}</Text>
-      </TouchableOpacity>
-    );
-  };
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            router.push({
+              pathname: '/transactiondetails',
+              params: { transaction: JSON.stringify({ ...item, total }) },
+            })
+          }
+          onPressIn={onPressIn}
+          onPressOut={onPressOut}
+          style={styles.cardWrapper}
+        >
+          <View style={styles.card}>
+            <View style={styles.row}>
+              <View style={styles.storeIcon}>
+                <MaterialCommunityIcons name="store" size={24} color="#fff" />
+              </View>
+              <Text style={styles.store}>{item.store}</Text>
+              <Text style={styles.total}>${total.toFixed(2)}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.category}>{item.category}</Text>
+              <Text style={styles.date}>{item.date}</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    )
+  })
 
   return (
     <View style={styles.container}>
       <FlatList
         data={mockLogs}
         keyExtractor={(item) => item.id}
-        renderItem={renderItem}
+        renderItem={({ item }) => <RenderItem item={item} />}
         contentContainerStyle={{ paddingBottom: 20 }}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#eef2f7', padding: 16 },
-  card: {
-    backgroundColor: '#fff',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 6,
-    elevation: 3,
+  container: {
+    flex: 1,
+    backgroundColor: '#eef2f7',
+    paddingTop: 40,
+    paddingHorizontal: 12,
   },
-  store: { fontSize: 18, fontWeight: '700', marginBottom: 4 },
-  category: { fontSize: 16, marginBottom: 4 },
-  date: { fontSize: 14, marginBottom: 4, color: '#555' },
-  total: { fontSize: 16, fontWeight: '600', marginTop: 4, color: '#e76f51' },
-});
-
-
+  cardWrapper: {
+    marginBottom: 15,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 7,
+    elevation: 4,
+  },
+  card: {
+    borderRadius: 15,
+    padding: 18,
+    backgroundColor: '#111174ff', // solid nice color
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  storeIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#1a1a1a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  store: { fontSize: 18, fontWeight: '700', color: '#fff', flex: 1 },
+  category: { fontSize: 14, color: '#f0f0f0', fontStyle: 'italic' },
+  date: { fontSize: 14, color: '#54c747ff' },
+  total: { fontSize: 16, fontWeight: '600', color: '#1cba40ff' },
+})
