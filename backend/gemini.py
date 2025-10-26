@@ -5,7 +5,6 @@ import enum
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
 
@@ -17,7 +16,7 @@ class Category(enum.Enum):
     TRANSPORTATION = "TRANSPORTATION"
     UTILITIES = "UTILITIES"
     DINING = "DINING"
-    MISCELLANEOUS = "MISC"
+    MISC = "MISC"
 
 
 class Item(BaseModel):
@@ -34,11 +33,8 @@ class Receipt(BaseModel):
     purchase_date: date
 
 
-# Initialize Gemini client with API key from environment
-api_key = os.getenv("GEMINI_API_KEY")
-if not api_key:
-    raise ValueError("GEMINI_API_KEY not found in environment variables")
-
+api_key = os.environ["GEMINI_API_KEY"]
+print(f"API: {api_key}")
 client = genai.Client(api_key=api_key)
 
 

@@ -1,58 +1,28 @@
-import { HapticTab } from '@/components/haptic-tab'
-import { IconSymbol } from '@/components/ui/icon-symbol'
-import { Colors } from '@/constants/theme'
-import { useColorScheme } from '@/hooks/use-color-scheme'
-import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { Tabs } from 'expo-router'
-import React from 'react'
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs'
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme()
-
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => (
-            <FontAwesome name="home" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="scanner"
-        options={{
-          title: 'Scanner',
-          tabBarIcon: ({ color }) => (
-            <FontAwesome name="camera" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="log"
-        options={{
-          title: 'Log',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="account"
-        options={{
-          title: 'Account',
-          tabBarIcon: ({ color }) => (
-            <FontAwesome name="user" size={24} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+    <NativeTabs minimizeBehavior="onScrollDown">
+      <NativeTabs.Trigger name="index">
+        <Label>Home</Label>
+        <Icon sf="house" drawable="custom_android_drawable" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="log">
+        <Icon sf="book" drawable="custom_settings_drawable" />
+        <Label>Log</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="scanner">
+        <Icon sf="camera" drawable="custom_settings_drawable" />
+        <Label>Scanner</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="chat">
+        <Icon sf="message" drawable="custom_settings_drawable" />
+        <Label>Chat</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="account">
+        <Icon sf="person" drawable="custom_seettings_drawable" />
+        <Label>Account</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   )
 }

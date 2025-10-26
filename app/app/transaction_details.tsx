@@ -30,7 +30,6 @@ export default function TransactionDetail() {
     <FlatList
       ListHeaderComponent={
         <View>
-          {/* Store Info Card */}
           <View style={styles.card}>
             <Text style={styles.header}>{transaction.store}</Text>
             {transaction.address && (

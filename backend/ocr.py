@@ -4,31 +4,6 @@ import imutils
 import cv2
 import re
 import numpy as np
-import os
-import shutil
-
-# Configure pytesseract to find tesseract executable
-# First try to find it in PATH
-tesseract_cmd = shutil.which("tesseract")
-
-# If not in PATH, check common installation locations
-if not tesseract_cmd:
-    tesseract_paths = [
-        "/opt/homebrew/bin/tesseract",  # Homebrew ARM Mac
-        "/usr/local/bin/tesseract",  # Homebrew Intel Mac
-        "/opt/anaconda3/bin/tesseract",  # Conda
-    ]
-
-    for path in tesseract_paths:
-        if os.path.exists(path):
-            tesseract_cmd = path
-            break
-
-if tesseract_cmd:
-    pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
-    print(f"[INFO] Using Tesseract at: {tesseract_cmd}")
-else:
-    print("[ERROR] Tesseract not found. Please install with: brew install tesseract")
 
 
 def scan_receipt(image_bytes):
@@ -45,28 +20,20 @@ def scan_receipt(image_bytes):
     cnts = imutils.grab_contours(cnts)
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
 
-    # initialize a contour that corresponds to the receipt outline
     receiptCnt = None
-    # loop over the contours
     for c in cnts:
-        # approximate the contour
         peri = cv2.arcLength(c, True)
         approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-        # if our approximated contour has four points, then we can
-        # assume we have found the outline of the receipt
         if len(approx) == 4:
             receiptCnt = approx
             break
 
-    # apply a four-point perspective transform to the *original* image to
-    # obtain a top-down bird's-eye view of the receipt
     try:
         receipt = four_point_transform(orig, receiptCnt.reshape(4, 2) * ratio)
     except:
         print("Error: Could not recognize receipt edges")
         exit()
 
-    # show transformed image
     # cv2.imshow("Receipt Transform", imutils.resize(receipt, width=500))
     # cv2.waitKey(0)
 
@@ -75,22 +42,13 @@ def scan_receipt(image_bytes):
         cv2.cvtColor(receipt, cv2.COLOR_BGR2RGB), config=options
     )
 
-    # define a regular expression that will match line items that include
-    # a price component
     pricePattern = r"([0-9]+\.[0-9]+)"
     totalPattern = r"(tot|due|bal).+([0-9]+\.[0-9]+)"
     name = text.split("\n")[0]
     total = ""
     items = []
 
-    # show the output of filtering out *only* the line items in the
-    # receipt
-    print("[INFO] price line items:")
-    print("========================")
-    # loop over each of the line items in the OCR'd receipt
     for row in text.split("\n"):
-        # check to see if the price regular expression matches the current
-        # row
         if re.search(pricePattern, row) is not None:
             if re.search(totalPattern, row) is not None:
                 total = row.split(" ")[-1]

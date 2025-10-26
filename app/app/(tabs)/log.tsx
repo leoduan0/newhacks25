@@ -4,17 +4,47 @@ import { useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import {
   Animated,
-  FlatList,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native'
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 
 export default function Log() {
   const router = useRouter()
   const [transactions, setTransactions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const onRefresh = async () => {
+    setRefreshing(true)
+    try {
+      const { data, error } = await supabase
+        .from('records')
+        .select(
+          `
+          id,
+          store,
+          phone,
+          created_at,
+          items (
+            name,
+            cost
+          )
+        `,
+        )
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      setTransactions(data || [])
+    } catch (err) {
+      console.error('Error refreshing transactions:', err)
+    } finally {
+      setRefreshing(false)
+    }
+  }
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -68,7 +98,7 @@ export default function Log() {
           activeOpacity={0.8}
           onPress={() =>
             router.push({
-              pathname: '/transactiondetails',
+              pathname: '/transaction_details',
               params: { transaction: JSON.stringify({ ...item, total }) },
             })
           }
@@ -98,30 +128,35 @@ export default function Log() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container}>
+          <Text>Loading...</Text>
+        </SafeAreaView>
+      </SafeAreaProvider>
     )
   }
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={transactions}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <RenderItem item={item} />}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 20 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          {transactions.map((item) => (
+            <RenderItem key={item.id} item={item} />
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eef2f7',
-    paddingTop: 40,
-    paddingHorizontal: 12,
   },
   cardWrapper: {
     marginBottom: 15,
@@ -135,7 +170,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 15,
     padding: 18,
-    backgroundColor: '#111174ff', // solid nice color
+    backgroundColor: '#111174ff',
   },
   row: {
     flexDirection: 'row',

@@ -3,36 +3,12 @@ from flask_cors import CORS
 import base64
 import os
 from datetime import datetime
-
-# Configure Tesseract before importing ocr module
-import pytesseract
-import shutil
-
-tesseract_cmd = shutil.which("tesseract")
-if not tesseract_cmd:
-    # Check common installation paths
-    common_paths = [
-        "/opt/homebrew/bin/tesseract",  # Homebrew ARM Mac
-        "/usr/local/bin/tesseract",  # Homebrew Intel Mac
-        "/opt/anaconda3/bin/tesseract",  # Conda
-        "/usr/bin/tesseract",  # Linux/Docker
-    ]
-    for path in common_paths:
-        if os.path.exists(path):
-            tesseract_cmd = path
-            break
-
-if tesseract_cmd:
-    pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
-    print(f"✓ Tesseract configured at: {tesseract_cmd}")
-else:
-    print(
-        "✗ WARNING: Tesseract not found! Install with: brew install tesseract (Mac) or apt-get install tesseract-ocr (Linux)"
-    )
-
 import ocr
 import gemini
 import database
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -44,7 +20,7 @@ def scan():
         data = request.get_json()
 
         if not data or "image" not in data:
-            return jsonify({"success": False, "error": "No image data provided"}), 400
+            return jsonify({"success": False, "error": "No image provided"}), 400
 
         image_base64 = data["image"]
         print(f"Received image data at {datetime.now()}")
@@ -58,13 +34,12 @@ def scan():
             jsonify(
                 {
                     "success": True,
-                    "message": "Receipt uploaded successfully",
+                    "message": "Receipt uploaded successfully.",
                     "timestamp": datetime.now().isoformat(),
                 }
             ),
             200,
         )
-
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
@@ -76,4 +51,4 @@ def health():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5001)), debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ["PORT"]), debug=True)

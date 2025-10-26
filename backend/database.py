@@ -2,11 +2,15 @@ from supabase import create_client, Client
 from datetime import datetime
 import os
 import json
-from dotenv import load_dotenv
 import uuid
+from dotenv import load_dotenv
 
 load_dotenv()
-supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+
+
+url: str = os.environ["SUPABASE_URL"]
+key: str = os.environ["SUPABASE_KEY"]
+supabase: Client = create_client(url, key)
 
 
 def load_from_json(json_text: str):
@@ -31,7 +35,6 @@ def get_id(table_name: str):
 
 
 def insert_data(receipt_data) -> dict:
-    # Convert Pydantic model to dict if needed
     if hasattr(receipt_data, "model_dump"):
         receipt_dict = receipt_data.model_dump()
     elif hasattr(receipt_data, "dict"):
@@ -41,12 +44,10 @@ def insert_data(receipt_data) -> dict:
 
     receipt_id = get_id("records")
 
-    # Convert enum to string value if needed
     category = receipt_dict["receipt_type"]
     if hasattr(category, "value"):
         category = category.value
 
-    # First, insert the record so it exists for foreign key constraints
     records = {
         "id": receipt_id,
         "store": receipt_dict["merchant_name"],
@@ -62,7 +63,6 @@ def insert_data(receipt_data) -> dict:
     }
     supabase.table("records").insert(records).execute()
 
-    # Then insert items and create relationships
     for item in receipt_dict["items"]:
         item_id = get_id("items")
         item_dict = {
@@ -83,11 +83,8 @@ def get_row_by_id(row_id: str):
     try:
         response = supabase.table("records").select("*").eq("id", row_id).execute()
 
-        # Check if data exists
         if response.data:
-            return response.data[
-                0
-            ]  # Returns the first (and should be only) matching row
+            return response.data[0]
         else:
             return None
 

@@ -87,7 +87,6 @@ export default function Chat() {
     setMessages((prev) => [...prev, userMessage])
     setInput('')
 
-    // Add "thinking..." placeholder
     const thinkingId = (Date.now() + 1).toString()
     setMessages((prev) => [
       ...prev,
@@ -142,12 +141,6 @@ User text: ${userMessage.text}
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.banner}>
-        <Text style={styles.bannerText}>
-          Ask Receipt Questions with FintechAI
-        </Text>
-      </View>
-
       {messages.length > 0 && (
         <View style={styles.topBar}>
           <TouchableOpacity onPress={clearChat} style={styles.clearButton}>

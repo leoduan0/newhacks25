@@ -1,4 +1,3 @@
-import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 type Props = {
@@ -61,39 +60,3 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 })
-
-// import React from 'react';
-// import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-// type Props = {
-//   selectedRange: string;
-//   onSelectRange: (range: string) => void;
-// };
-
-// export const TimeFilters = ({ selectedRange, onSelectRange }: Props) => {
-//   const ranges = ['1 week', '1 month', '3 months'];
-
-//   return (
-//     <View style={styles.container}>
-//       {ranges.map((r) => (
-//         <TouchableOpacity
-//           key={r}
-//           style={[styles.button, selectedRange === r && styles.selectedButton]}
-//           onPress={() => onSelectRange(r)}
-//         >
-//           <Text style={[styles.text, selectedRange === r && styles.selectedText]}>
-//             {r}
-//           </Text>
-//         </TouchableOpacity>
-//       ))}
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 16 },
-//   button: { paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, backgroundColor: '#eee' },
-//   selectedButton: { backgroundColor: '#1a73e8' },
-//   text: { color: '#333', fontWeight: '600' },
-//   selectedText: { color: '#fff' },
-// });
