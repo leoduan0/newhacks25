@@ -9,7 +9,7 @@ export default function PieChart({ data }: { data: PieData }) {
 
   const hoveredData = hoveredSlice ? data.find((d) => d.x === hoveredSlice) : null;
 
-  const colorScale = ['#FF6384', '#36A2EB', '#FFCE56', '#8A2BE2', '#FFA500'];
+  const colorScale = ['#FF6384', '#36A2EB', '#2bd352ff', '#8A2BE2', '#FFA500'];
 
   return (
     <View style={styles.rowContainer}>
@@ -55,7 +55,6 @@ export default function PieChart({ data }: { data: PieData }) {
           <>
             <Text style={styles.tooltipTitle}>{hoveredData.x}</Text>
             <Text>Total spent: ${hoveredData.y}</Text>
-            <Text>Purchases: {hoveredData.purchases ?? 0}</Text>
           </>
         ) : (
           // Empty placeholder text to keep size consistent
