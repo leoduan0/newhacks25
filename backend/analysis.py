@@ -26,14 +26,21 @@ def sort_by_date(num_entries: int=0):
             "date": row["purchase_date"]
         }
 
-        for i in range(len(purchase_by_date)):
-            if purchase_by_date[i]["date"] > entry["date"]:
-                continue
-            else:
-                purchase_by_date.insert(i, entry)
-                break
+        if not purchase_by_date:
+            purchase_by_date += entry
+        else:
+            for i in range(len(purchase_by_date)):
+                if purchase_by_date[i]["date"] > entry["date"]:
+                    continue
+                else:
+                    purchase_by_date.insert(i, entry)
+                    break
 
     if num_entries == 0:
         return purchase_by_date
     else:
         return purchase_by_date[:num_entries]
+
+
+if __name__ == "__main__":
+    print(sort_by_date(5))

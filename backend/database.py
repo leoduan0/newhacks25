@@ -92,4 +92,4 @@ def get_row_by_id(row_id: str):
 
 
 def get_all_rows():
-    return supabase.table("records").select("*").execute()
+    return supabase.table("records").select("*").execute().data
