@@ -42,14 +42,12 @@ client = genai.Client(api_key=api_key)
 def analyze_receipt(text: str, image_bytes: bytes):
     response = client.models.generate_content(
         model="gemini-2.0-flash",
-        contents=[f"This is extracted text from a receipt and its original image. Analyze and extract the most correct information by comparing both: \
+        contents=[
+            f"This is extracted text from a receipt and its original image. Analyze and extract the most correct information by comparing both: \
             category of purchase in uppercase, merchant name, merchant address, merchant phone, list of items with their names and prices. \
-                Also extract the date, but just return the extracted text. Receipt text: {text}, Image:", 
-                types.Part.from_bytes(
-                    data=image_bytes,
-                    mime_type='image/png'
-                )
-            ],
+                Also extract the date, but just return the extracted text. Receipt text: {text}, Image:",
+            types.Part.from_bytes(data=image_bytes, mime_type="image/png"),
+        ],
         config={
             "response_mime_type": "application/json",
             "response_schema": Receipt,

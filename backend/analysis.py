@@ -16,7 +16,6 @@ def count_categories():
 
 
 def sort_by_date(num_entries: int = 0):
-    # Descending
     purchase_by_date = []
     all_rows = db.get_all_rows()
 

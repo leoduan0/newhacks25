@@ -44,11 +44,12 @@ def scan():
         print(f"Error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
+
 @app.route("/analytics/stats", methods=["GET"])
 def get_analytics_stats():
     """
     Get analytics stats for a specific time period.
-    
+
     Query params:
     - period: "week", "month", or "year" (default: "month")
     - offset: number of periods to go back (default: 0)
@@ -59,34 +60,27 @@ def get_analytics_stats():
         period_type = request.args.get("period", "month")
         offset = int(request.args.get("offset", 0))
         user_id = request.args.get("user_id", None)
-        
-        # Get current period dates
+
         current_start, current_end = database.get_date_ranges(period_type, offset)
-        # Get previous period dates for comparison
         previous_start, previous_end = database.get_date_ranges(period_type, offset - 1)
-        # Get comparison stats
         stats = database.get_comparison_stats(
-            current_start, current_end,
-            previous_start, previous_end,
-            user_id
+            current_start, current_end, previous_start, previous_end, user_id
         )
-        
-        # Get display name for the period
+
         period_name = database.get_period_display_name(period_type, offset)
-        
-        # Format response for frontend
+
         response = {
             "period": {
                 "type": period_type,
                 "offset": offset,
                 "name": period_name,
                 "start_date": current_start,
-                "end_date": current_end
+                "end_date": current_end,
             },
             "summary": {
                 "total_spent": round(stats["current"]["total_spent"], 2),
                 "total_purchases": stats["current"]["total_purchases"],
-                "average_purchase": round(stats["current"]["average_purchase"], 2)
+                "average_purchase": round(stats["current"]["average_purchase"], 2),
             },
             "changes": stats["changes"],
             "categories": [
@@ -94,64 +88,18 @@ def get_analytics_stats():
                     "name": category,
                     "total": round(data["total"], 2),
                     "count": data["count"],
-                    "percentage": round(data["percentage"], 1)
+                    "percentage": round(data["percentage"], 1),
                 }
                 for category, data in stats["current"]["categories"].items()
-            ]
+            ],
         }
-        
+
         return jsonify(response), 200
-        
+
     except Exception as e:
         print(f"Error in analytics: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
-# Endpoint literally not even used in frontend, claude is stupid
-
-# @app.route("/analytics/periods", methods=["GET"])
-# def get_available_periods():
-#     """
-#     Get available date ranges for navigation.
-    
-#     Query params:
-#     - period: "week", "month", or "year"
-#     - offset: current offset
-#     """
-#     try:
-#         period_type = request.args.get("period", "month")
-#         current_offset = int(request.args.get("offset", 0))
-        
-#         # Get previous and next period info
-#         previous_start, previous_end = database.get_date_ranges(period_type, current_offset - 1)
-#         current_start, current_end = database.get_date_ranges(period_type, current_offset)
-#         next_start, next_end = database.get_date_ranges(period_type, current_offset + 1)
-        
-#         response = {
-#             "previous": {
-#                 "offset": current_offset - 1,
-#                 "name": database.get_period_display_name(period_type, current_offset - 1),
-#                 "start_date": previous_start,
-#                 "end_date": previous_end
-#             },
-#             "current": {
-#                 "offset": current_offset,
-#                 "name": database.get_period_display_name(period_type, current_offset),
-#                 "start_date": current_start,
-#                 "end_date": current_end
-#             },
-#             "next": {
-#                 "offset": current_offset + 1,
-#                 "name": database.get_period_display_name(period_type, current_offset + 1),
-#                 "start_date": next_start,
-#                 "end_date": next_end
-#             }
-#         }
-        
-#         return jsonify(response), 200
-        
-#     except Exception as e:
-#         print(f"Error getting periods: {e}")
-#         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route("/health", methods=["GET"])
 def health():

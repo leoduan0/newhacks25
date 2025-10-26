@@ -34,11 +34,13 @@ def scan_receipt(image_bytes):
         print("Error: Could not recognize receipt edges")
         exit()
 
-    unsharp = cv2.addWeighted(receipt, 2.0, cv2.GaussianBlur(receipt, (0,0), 3), -1.0, 0)
+    unsharp = cv2.addWeighted(
+        receipt, 2.0, cv2.GaussianBlur(receipt, (0, 0), 3), -1.0, 0
+    )
     sharpen_kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
     sharp = cv2.filter2D(unsharp, -1, sharpen_kernel)
     bilateral = cv2.bilateralFilter(sharp, 11, 80, 80)
-    
+
     options = "--psm 4"
     text = pytesseract.image_to_string(
         cv2.cvtColor(bilateral, cv2.COLOR_BGR2RGB), config=options

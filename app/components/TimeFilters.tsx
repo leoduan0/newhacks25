@@ -32,12 +32,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
-    marginHorizontal: 16, // add some space from screen edges
+    marginHorizontal: 16,
   },
   button: {
-    flex: 1, // make buttons expand equally
-    marginHorizontal: 4, // small spacing between buttons
-    paddingVertical: 12, // taller buttons for touch
+    flex: 1,
+    marginHorizontal: 4,
+    paddingVertical: 12,
     backgroundColor: '#4a90e2',
     borderRadius: 10,
     alignItems: 'center',
@@ -46,10 +46,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 2, // shadow for Android
+    elevation: 2,
   },
   selectedButton: {
-    backgroundColor: '#1a73e8', // highlighted color for selected
+    backgroundColor: '#1a73e8',
   },
   text: {
     color: '#fff',
