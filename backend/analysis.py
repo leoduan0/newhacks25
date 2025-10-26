@@ -28,14 +28,20 @@ def sort_by_date(num_entries: int = 0):
         }
 
         if not purchase_by_date:
-            purchase_by_date += entry
+            purchase_by_date.append(entry)  # Changed from += to .append()
         else:
+            inserted = False
             for i in range(len(purchase_by_date)):
                 if purchase_by_date[i]["date"] > entry["date"]:
                     continue
                 else:
                     purchase_by_date.insert(i, entry)
+                    inserted = True
                     break
+
+            # If entry has the earliest date, append to end
+            if not inserted:
+                purchase_by_date.append(entry)
 
     if num_entries == 0:
         return purchase_by_date
