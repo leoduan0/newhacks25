@@ -14,7 +14,7 @@ def count_categories():
     return category_count
 
 
-def sort_by_date():
+def sort_by_date(num_entries: int=0):
     # Descending
     purchase_by_date = []
     all_rows = db.get_all_rows()
@@ -33,3 +33,7 @@ def sort_by_date():
                 purchase_by_date.insert(i, entry)
                 break
 
+    if num_entries == 0:
+        return purchase_by_date
+    else:
+        return purchase_by_date[:num_entries]
