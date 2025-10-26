@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router'
 import React from 'react'
-import { View, Text, FlatList, StyleSheet, ScrollView } from 'react-native'
+import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function TransactionDetail() {
   const params = useLocalSearchParams()
@@ -22,8 +22,7 @@ export default function TransactionDetail() {
       {/* Store Info Card */}
       <View style={styles.card}>
         <Text style={styles.header}>{transaction.store}</Text>
-        <Text style={styles.subHeader}>Vendor: {transaction.vendor}</Text>
-        <Text style={styles.subHeader}>Phone: {transaction.phone}</Text>
+        <Text style={styles.subHeader}>Category: {transaction.category}</Text>
         <Text style={styles.subHeader}>Date: {transaction.date}</Text>
         <Text style={styles.total}>Total: ${transaction.total.toFixed(2)}</Text>
       </View>

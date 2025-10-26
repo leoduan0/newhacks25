@@ -2,22 +2,21 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import React from 'react'
 import {
-  View,
-  Text,
+  Animated,
   FlatList,
   StyleSheet,
+  Text,
   TouchableOpacity,
-  Animated,
+  View,
 } from 'react-native'
 
+// Mock data without hardcoded total
 const mockLogs = [
   {
     id: '1',
     store: 'BMO Store',
-    vendor: 'BMO Vendor',
-    phone: '123-456-7890',
+    category: 'Bank',
     date: '2025-10-25',
-    total: 42.5,
     items: [
       { name: 'Milk', price: 3.5 },
       { name: 'Bread', price: 2.0 },
@@ -26,10 +25,8 @@ const mockLogs = [
   {
     id: '2',
     store: 'SuperMart',
-    vendor: 'Super Vendor',
-    phone: '987-654-3210',
+    category: 'Food',
     date: '2025-10-24',
-    total: 30.0,
     items: [
       { name: 'Eggs', price: 5.0 },
       { name: 'Apples', price: 4.5 },
@@ -50,6 +47,9 @@ export default function Log() {
       Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start()
     }
 
+    // calculate total dynamically
+    const total = item.items.reduce((sum, i) => sum + i.price, 0)
+
     return (
       <Animated.View style={{ transform: [{ scale }] }}>
         <TouchableOpacity
@@ -57,28 +57,23 @@ export default function Log() {
           onPress={() =>
             router.push({
               pathname: '/transactiondetails',
-              params: { transaction: JSON.stringify(item) },
+              params: { transaction: JSON.stringify({ ...item, total }) },
             })
           }
           onPressIn={onPressIn}
           onPressOut={onPressOut}
           style={styles.cardWrapper}
         >
-          <View
-            colors={['#4ca1af', '#f0f0f0ff']}
-            start={[0, 0]}
-            end={[1, 1]}
-            style={styles.gradientCard}
-          >
+          <View style={styles.card}>
             <View style={styles.row}>
               <View style={styles.storeIcon}>
                 <MaterialCommunityIcons name="store" size={24} color="#fff" />
               </View>
               <Text style={styles.store}>{item.store}</Text>
-              <Text style={styles.total}>${item.total.toFixed(2)}</Text>
+              <Text style={styles.total}>${total.toFixed(2)}</Text>
             </View>
             <View style={styles.row}>
-              <Text style={styles.phone}>{item.phone}</Text>
+              <Text style={styles.category}>{item.category}</Text>
               <Text style={styles.date}>{item.date}</Text>
             </View>
           </View>
@@ -115,7 +110,11 @@ const styles = StyleSheet.create({
     shadowRadius: 7,
     elevation: 4,
   },
-  gradientCard: { borderRadius: 15, padding: 18 },
+  card: {
+    borderRadius: 15,
+    padding: 18,
+    backgroundColor: '#111174ff', // solid nice color
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -126,13 +125,13 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#3f2a9dff',
+    backgroundColor: '#1a1a1a',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
   },
   store: { fontSize: 18, fontWeight: '700', color: '#fff', flex: 1 },
-  phone: { fontSize: 14, color: '#f0f0f0' },
+  category: { fontSize: 14, color: '#f0f0f0', fontStyle: 'italic' },
   date: { fontSize: 14, color: '#54c747ff' },
   total: { fontSize: 16, fontWeight: '600', color: '#1cba40ff' },
 })
