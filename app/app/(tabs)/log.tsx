@@ -89,7 +89,7 @@ export default function Log() {
     }
 
     const total = Array.isArray(item.items)
-      ? item.items.reduce((sum, i) => sum + (i.cost ?? 0), 0)
+      ? item.items.reduce((sum: number, i: any) => sum + (i.cost ?? 0), 0) * 1.13
       : 0
 
     return (

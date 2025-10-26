@@ -1,5 +1,6 @@
 from supabase import create_client, Client
 from datetime import datetime, timedelta
+import dateutil.parser as parser
 import os
 import json
 import uuid
@@ -53,10 +54,10 @@ def insert_data(receipt_data) -> dict:
         "store": receipt_dict["merchant_name"],
         "category": category,
         "image_url": "",
-        "address": receipt_dict["merchant_address"],
-        "phone": receipt_dict["merchant_phone"],
+        "address": receipt_dict.get("merchant_address") or "N/A",
+        "phone": receipt_dict.get("merchant_phone") or "N/A",
         "notes": "",
-        "purchase_date": str(receipt_dict["purchase_date"]),
+        "purchase_date": parser.parse(receipt_dict["purchase_date"]).isoformat(),
         "created_at": str(datetime.now().isoformat()),
         "updated_at": str(datetime.now().isoformat()),
         "user_id": "dc5b034a-d418-4e3f-8069-e7bb21550870",
@@ -196,7 +197,7 @@ def calculate_period_stats(start_date: str, end_date: str, user_id: str = None):
         # Calculate total for this transaction
         transaction_total = 0
         if transaction.get("items"):
-            transaction_total = sum(item["cost"] for item in transaction["items"])
+            transaction_total = sum(item["cost"] for item in transaction["items"])*1.13  # Including tax
         
         # Initialize category if needed
         if category not in stats["categories"]:

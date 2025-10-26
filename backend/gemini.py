@@ -1,4 +1,5 @@
 from google import genai
+from google.genai import types
 from pydantic import BaseModel
 from datetime import date
 import enum
@@ -30,7 +31,7 @@ class Receipt(BaseModel):
     merchant_address: str | None
     merchant_phone: str | None
     items: list[Item]
-    purchase_date: date
+    purchase_date: str
 
 
 api_key = os.environ["GEMINI_API_KEY"]
@@ -38,11 +39,17 @@ print(f"API: {api_key}")
 client = genai.Client(api_key=api_key)
 
 
-def analyze_receipt(text: str):
+def analyze_receipt(text: str, image_bytes: bytes):
     response = client.models.generate_content(
-        model="gemini-2.0-flash-exp",
-        contents=f"This is text from a receipt. Analyze and extract: category of purchase in uppercase, merchant name, \
-            merchant address, merchant phone, list of items with their names and prices, and date. Receipt text: {text}",
+        model="gemini-2.0-flash",
+        contents=[f"This is extracted text from a receipt and its original image. Analyze and extract the most correct information by comparing both: \
+            category of purchase in uppercase, merchant name, merchant address, merchant phone, list of items with their names and prices. \
+                Also extract the date, but just return the extracted text. Receipt text: {text}, Image:", 
+                types.Part.from_bytes(
+                    data=image_bytes,
+                    mime_type='image/png'
+                )
+            ],
         config={
             "response_mime_type": "application/json",
             "response_schema": Receipt,

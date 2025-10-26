@@ -13,8 +13,8 @@ def scan_receipt(image_bytes):
     ratio = orig.shape[1] / float(image.shape[1])
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    edged = cv2.Canny(blurred, 75, 200)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 1.4)
+    edged = cv2.Canny(blurred, 100, 200)
 
     cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
@@ -34,12 +34,14 @@ def scan_receipt(image_bytes):
         print("Error: Could not recognize receipt edges")
         exit()
 
-    # cv2.imshow("Receipt Transform", imutils.resize(receipt, width=500))
-    # cv2.waitKey(0)
-
+    unsharp = cv2.addWeighted(receipt, 2.0, cv2.GaussianBlur(receipt, (0,0), 3), -1.0, 0)
+    sharpen_kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+    sharp = cv2.filter2D(unsharp, -1, sharpen_kernel)
+    bilateral = cv2.bilateralFilter(sharp, 11, 80, 80)
+    
     options = "--psm 4"
     text = pytesseract.image_to_string(
-        cv2.cvtColor(receipt, cv2.COLOR_BGR2RGB), config=options
+        cv2.cvtColor(bilateral, cv2.COLOR_BGR2RGB), config=options
     )
 
     pricePattern = r"([0-9]+\.[0-9]+)"

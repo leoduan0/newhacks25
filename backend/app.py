@@ -27,7 +27,7 @@ def scan():
 
         image_bytes = base64.b64decode(image_base64)
         receipt_data = ocr.scan_receipt(image_bytes)
-        interpreted_receipt = gemini.analyze_receipt(receipt_data)
+        interpreted_receipt = gemini.analyze_receipt(receipt_data, image_bytes)
         database.insert_data(interpreted_receipt)
 
         return (
