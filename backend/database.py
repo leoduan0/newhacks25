@@ -30,7 +30,35 @@ def get_id():
     return new_id
 
 
-def switch_format(receipt_type: str, merchant_name: str, items: list[tuple[str, float]], total_amount: float, purchase_date=None) -> str:
+def switch_format(receipt_type: str, merchant_name: str, items: list[tuple[str, float]], total_amount: float, purchase_date=None) -> dict:
+    item_list = []
+    for item in items:
+        item_dict = {
+            "name": item[0],
+            "cost": item[1],
+            "created_at": str(datetime.now().isoformat()),
+            "updated_at": str(datetime.now().isoformat()),
+            "userId": "dc5b034a-d418-4e3f-8069-e7bb21550870",
+        }
+        item_list += item_dict
+
+    formatted = {
+        "store": merchant_name,
+        "category": receipt_type,
+        "imageUrl": "",
+        "address": "",
+        "phone": "",
+        "notes": "",
+        "createdAt": str(datetime.now().isoformat()),
+        "updatedAt": str(datetime.now().isoformat()),
+        "userId": "dc5b034a-d418-4e3f-8069-e7bb21550870",
+        "items": item_list
+    }
+
+    return formatted
+
+
+def insert_receipt(receipt_type: str, merchant_name: str, items: list[tuple[str, float]], total_amount: float, purchase_date=None):
     item_list = []
     for item in items:
         item_dict = {
@@ -55,33 +83,6 @@ def switch_format(receipt_type: str, merchant_name: str, items: list[tuple[str, 
         "items": item_list
     }
 
-    return json.dumps(formatted)
-
-
-def insert_receipt(receipt_type: str, merchant_name: str, items: list[tuple[str, float]], total_amount: float, purchase_date=None):
-    """
-    Sample Input
-
-    "Walmart", [("Apple", 3.0)], "TRAVEL"
-    """
-    try:
-        row_data = {
-            "id": get_id(),
-            "type": receipt_type,
-            "merchant_name": merchant_name,
-            "items": items,
-            "total_amount": total_amount,
-            "date": str(purchase_date) or str(datetime.now().isoformat()),
-        }
-
-        response = (supabase.table("records").insert(row_data).execute())
-        print(response)
-
-    except Exception as e:
-        print(f"Error inserting receipt: {e}")
-        return None
-
-    return None
 
 
 def get_row_by_id(row_id: str):
