@@ -5,19 +5,30 @@ import cv2
 import re
 import numpy as np
 import os
+import shutil
 
 # Configure pytesseract to find tesseract executable
-# Check common installation paths
-tesseract_paths = [
-    '/opt/homebrew/bin/tesseract',  # Homebrew ARM Mac
-    '/usr/local/bin/tesseract',      # Homebrew Intel Mac
-    '/opt/anaconda3/bin/tesseract',  # Conda
-]
+# First try to find it in PATH
+tesseract_cmd = shutil.which('tesseract')
 
-for path in tesseract_paths:
-    if os.path.exists(path):
-        pytesseract.pytesseract.tesseract_cmd = path
-        break
+# If not in PATH, check common installation locations
+if not tesseract_cmd:
+    tesseract_paths = [
+        '/opt/homebrew/bin/tesseract',  # Homebrew ARM Mac
+        '/usr/local/bin/tesseract',      # Homebrew Intel Mac
+        '/opt/anaconda3/bin/tesseract',  # Conda
+    ]
+    
+    for path in tesseract_paths:
+        if os.path.exists(path):
+            tesseract_cmd = path
+            break
+
+if tesseract_cmd:
+    pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
+    print(f"[INFO] Using Tesseract at: {tesseract_cmd}")
+else:
+    print("[ERROR] Tesseract not found. Please install with: brew install tesseract")
 
 
 def scan_receipt(image_bytes):
