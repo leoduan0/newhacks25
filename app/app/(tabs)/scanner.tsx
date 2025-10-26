@@ -11,6 +11,8 @@ import {
   View,
 } from 'react-native'
 
+const API_URL = "http://100.67.81.168:5001/scan"
+
 export default function ScannerPage() {
   const [facing, setFacing] = useState<CameraType>('back')
   const [permission, requestPermission] = useCameraPermissions()
@@ -43,7 +45,7 @@ export default function ScannerPage() {
       setUploading(true)
       const photo = await cameraRef.current.takePictureAsync({ base64: true })
 
-      const response = await fetch('https://newhacks25.onrender.com/scan', {
+      const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: photo.base64 }),

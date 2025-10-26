@@ -3,8 +3,34 @@ from flask_cors import CORS
 import base64
 import os
 from datetime import datetime
+
+# Configure Tesseract before importing ocr module
+import pytesseract
+import shutil
+
+tesseract_cmd = shutil.which('tesseract')
+if not tesseract_cmd:
+    # Check common installation paths
+    common_paths = [
+        '/opt/homebrew/bin/tesseract',    # Homebrew ARM Mac
+        '/usr/local/bin/tesseract',        # Homebrew Intel Mac
+        '/opt/anaconda3/bin/tesseract',    # Conda
+        '/usr/bin/tesseract',              # Linux/Docker
+    ]
+    for path in common_paths:
+        if os.path.exists(path):
+            tesseract_cmd = path
+            break
+
+if tesseract_cmd:
+    pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
+    print(f"✓ Tesseract configured at: {tesseract_cmd}")
+else:
+    print("✗ WARNING: Tesseract not found! Install with: brew install tesseract (Mac) or apt-get install tesseract-ocr (Linux)")
+
 import ocr
 import gemini
+import database
 
 app = Flask(__name__)
 CORS(app)
@@ -24,7 +50,7 @@ def scan():
         image_bytes = base64.b64decode(image_base64)
         receipt_data = ocr.scan_receipt(image_bytes)
         interpreted_receipt = gemini.analyze_receipt(receipt_data)
-        
+        database.insert_data(interpreted_receipt)
 
         return (
             jsonify(
@@ -48,4 +74,4 @@ def health():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5001)), debug=True)
