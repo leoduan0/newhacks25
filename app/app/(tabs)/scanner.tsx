@@ -13,7 +13,7 @@ import {
 } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
-const API_URL = 'http://100.67.81.168:5001/scan'
+const API_URL = `${process.env.EXPO_PUBLIC_API_BASE_IP!}/scan`
 
 export default function ScannerPage() {
   const [facing, setFacing] = useState<CameraType>('back')

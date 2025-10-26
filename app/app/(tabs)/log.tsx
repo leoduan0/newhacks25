@@ -89,7 +89,8 @@ export default function Log() {
     }
 
     const total = Array.isArray(item.items)
-      ? item.items.reduce((sum: number, i: any) => sum + (i.cost ?? 0), 0) * 1.13
+      ? item.items.reduce((sum: number, i: any) => sum + (i.cost ?? 0), 0) *
+        1.13
       : 0
 
     return (
@@ -139,6 +140,7 @@ export default function Log() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
+        <Text style={styles.headerTitle}>Transactions</Text>
         <ScrollView
           contentContainerStyle={{ paddingBottom: 20 }}
           refreshControl={
@@ -157,6 +159,15 @@ export default function Log() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    backgroundColor: '#eef2f7',
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 8,
   },
   cardWrapper: {
     marginBottom: 15,
@@ -168,9 +179,14 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   card: {
-    borderRadius: 15,
-    padding: 18,
-    backgroundColor: '#111174ff',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   row: {
     flexDirection: 'row',
@@ -187,8 +203,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 8,
   },
-  store: { fontSize: 18, fontWeight: '700', color: '#fff', flex: 1 },
-  category: { fontSize: 14, color: '#f0f0f0', fontStyle: 'italic' },
+  store: { fontSize: 18, fontWeight: '700', color: '#000', flex: 1 },
+  category: { fontSize: 14, color: '#000', fontStyle: 'italic' },
   date: { fontSize: 14, color: '#54c747ff' },
   total: { fontSize: 16, fontWeight: '600', color: '#1cba40ff' },
 })

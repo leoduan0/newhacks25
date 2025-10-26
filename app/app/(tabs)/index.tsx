@@ -10,9 +10,8 @@ import {
 } from 'react-native'
 import { VictoryPie } from 'victory-native'
 
-const API_URL = 'http://100.67.81.168:5001' // Update with your backend URL
+const API_URL = process.env.EXPO_PUBLIC_API_BASE_IP!
 
-// Category display names and colors
 const CATEGORY_CONFIG = {
   ENTERTAINMENT: { name: 'Entertainment', color: '#FF6384' },
   DINING: { name: 'Food & Dining', color: '#36A2EB' },
@@ -25,8 +24,8 @@ const CATEGORY_CONFIG = {
 }
 
 export default function HomeScreen() {
-  const [periodType, setPeriodType] = useState('month') // 'week', 'month', 'year'
-  const [offset, setOffset] = useState(0) // 0 = current period
+  const [periodType, setPeriodType] = useState('month')
+  const [offset, setOffset] = useState(0)
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
@@ -58,7 +57,7 @@ export default function HomeScreen() {
 
   const handlePeriodChange = (newPeriod) => {
     setPeriodType(newPeriod)
-    setOffset(0) // Reset to current period when changing type
+    setOffset(0)
   }
 
   const handleNavigate = (direction) => {
@@ -89,28 +88,25 @@ export default function HomeScreen() {
     )
   }
 
-  // Prepare pie chart data
-  const chartData = data?.categories?.map((cat) => ({
-    x: cat.name,
-    y: cat.total,
-    label: `${cat.percentage.toFixed(0)}%`,
-  })) || []
+  const chartData =
+    data?.categories?.map((cat) => ({
+      x: cat.name,
+      y: cat.total,
+      label: `${cat.percentage.toFixed(0)}%`,
+    })) || []
 
-  const colorScale = data?.categories?.map(
-    (cat) =>
-      CATEGORY_CONFIG[cat.name]?.color ||
-      CATEGORY_CONFIG.MISC.color,
-  ) || []
+  const colorScale =
+    data?.categories?.map(
+      (cat) => CATEGORY_CONFIG[cat.name]?.color || CATEGORY_CONFIG.MISC.color,
+    ) || []
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Spending by Category</Text>
         </View>
 
-        {/* Pie Chart Section */}
         <View style={styles.chartContainer}>
           {chartData.length > 0 ? (
             <VictoryPie
@@ -135,7 +131,6 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* Legend */}
         <View style={styles.legendContainer}>
           {data?.categories?.map((cat, index) => (
             <View key={cat.name} style={styles.legendItem}>
@@ -156,7 +151,6 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* Time Filter Buttons */}
         <View style={styles.filterContainer}>
           <TouchableOpacity
             style={[

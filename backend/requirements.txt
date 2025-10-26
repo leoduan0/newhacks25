@@ -8,6 +8,6 @@ numpy<2.3.0
 scipy>=1.10.0
 pydantic==2.12.3
 pytesseract==0.3.13
+python-dateutil==2.9.0
 python-dotenv==1.0.1
 supabase
-dateutil==2.9.0
