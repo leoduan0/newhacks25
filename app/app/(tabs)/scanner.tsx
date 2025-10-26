@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native'
 
-const API_URL = "http://100.67.81.168:5001/scan"
+const API_URL = 'http://100.67.81.168:5001/scan'
 
 export default function ScannerPage() {
   const [facing, setFacing] = useState<CameraType>('back')

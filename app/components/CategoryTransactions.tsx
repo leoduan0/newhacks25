@@ -1,28 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 type Transaction = {
-  id: string;
-  description: string;
-  amount: number;
-  date: string;
-  category: string;
-};
+  id: string
+  description: string
+  amount: number
+  date: string
+  category: string
+}
 
 type Props = {
-  logs: Transaction[];
-  categories: string[];
-};
+  logs: Transaction[]
+  categories: string[]
+}
 
 export const CategoryTransactionsWeb = ({ logs, categories }: Props) => {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [selectedCategory, setSelectedCategory] = useState(categories[0])
 
   // Filter logs for selected category and sort by most recent
   const recentTransactions = logs
     .filter((t) => t.category === selectedCategory)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   // Ensure we always show 5 rows
-  const displayTransactions = Array.from({ length: 5 }, (_, i) => recentTransactions[i] || null);
+  const displayTransactions = Array.from(
+    { length: 5 },
+    (_, i) => recentTransactions[i] || null,
+  )
 
   return (
     <div style={styles.container}>
@@ -51,14 +54,16 @@ export const CategoryTransactionsWeb = ({ logs, categories }: Props) => {
           <div key={index} style={styles.transactionItem}>
             <span>{index + 1}.</span>
             <span>
-              {t ? `${t.description} ($${t.amount.toFixed(2)})` : '(No more recents)'}
+              {t
+                ? `${t.description} ($${t.amount.toFixed(2)})`
+                : '(No more recents)'}
             </span>
           </div>
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Styles (React CSSProperties)
 const styles: Record<string, React.CSSProperties> = {
@@ -99,21 +104,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '3px 0',
     borderBottom: '1px solid #eee',
   },
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 // import { Picker } from '@react-native-picker/picker';
 // import React, { useState } from 'react';

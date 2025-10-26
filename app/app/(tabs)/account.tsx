@@ -2,7 +2,7 @@ import Auth from '@/components/Auth'
 import { supabase } from '@/utils/supabase'
 import { Session } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
-import { View, Text, Button, ActivityIndicator, StyleSheet } from 'react-native'
+import { View, Text } from 'react-native'
 import 'react-native-url-polyfill/auto'
 
 export default function App() {
