@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+
 class Category(enum.Enum):
     GROCERIES = "GROCERIES"
     INVOICE = "INVOICE"
@@ -18,10 +19,12 @@ class Category(enum.Enum):
     DINING = "DINING"
     MISCELLANEOUS = "MISC"
 
+
 class Item(BaseModel):
     name: str
     price: float
-    
+
+
 class Receipt(BaseModel):
     receipt_type: Category
     merchant_name: str
@@ -30,12 +33,14 @@ class Receipt(BaseModel):
     items: list[Item]
     purchase_date: date
 
+
 # Initialize Gemini client with API key from environment
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
     raise ValueError("GEMINI_API_KEY not found in environment variables")
 
 client = genai.Client(api_key=api_key)
+
 
 def analyze_receipt(text: str):
     response = client.models.generate_content(
@@ -45,9 +50,9 @@ def analyze_receipt(text: str):
         config={
             "response_mime_type": "application/json",
             "response_schema": Receipt,
-        },)
+        },
+    )
 
     print(response.text)
     my_receipts: Receipt = response.parsed
     return my_receipts
-

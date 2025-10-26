@@ -16,7 +16,7 @@ def load_from_json(json_text: str):
         items=formatted["items"],
         receipt_type=formatted["type"],
         total_amount=formatted["total_amount"],
-        purchase_date=formatted["date"]
+        purchase_date=formatted["date"],
     )
 
 
@@ -29,20 +29,21 @@ def get_id(table_name: str):
 
     return new_id
 
+
 def insert_data(receipt_data) -> dict:
     # Convert Pydantic model to dict if needed
-    if hasattr(receipt_data, 'model_dump'):
+    if hasattr(receipt_data, "model_dump"):
         receipt_dict = receipt_data.model_dump()
-    elif hasattr(receipt_data, 'dict'):
+    elif hasattr(receipt_data, "dict"):
         receipt_dict = receipt_data.dict()
     else:
         receipt_dict = receipt_data
-    
+
     receipt_id = get_id("records")
-    
+
     # Convert enum to string value if needed
     category = receipt_dict["receipt_type"]
-    if hasattr(category, 'value'):
+    if hasattr(category, "value"):
         category = category.value
 
     # First, insert the record so it exists for foreign key constraints
@@ -73,7 +74,9 @@ def insert_data(receipt_data) -> dict:
             # "user_id": "dc5b034a-d418-4e3f-8069-e7bb21550870",
         }
         supabase.table("items").insert(item_dict).execute()
-        supabase.table("_TransactionItems").insert({'A': item_id, 'B': receipt_id}).execute()
+        supabase.table("_TransactionItems").insert(
+            {"A": item_id, "B": receipt_id}
+        ).execute()
 
 
 def get_row_by_id(row_id: str):
@@ -82,7 +85,9 @@ def get_row_by_id(row_id: str):
 
         # Check if data exists
         if response.data:
-            return response.data[0]  # Returns the first (and should be only) matching row
+            return response.data[
+                0
+            ]  # Returns the first (and should be only) matching row
         else:
             return None
 

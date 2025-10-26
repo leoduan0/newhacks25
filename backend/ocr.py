@@ -9,16 +9,16 @@ import shutil
 
 # Configure pytesseract to find tesseract executable
 # First try to find it in PATH
-tesseract_cmd = shutil.which('tesseract')
+tesseract_cmd = shutil.which("tesseract")
 
 # If not in PATH, check common installation locations
 if not tesseract_cmd:
     tesseract_paths = [
-        '/opt/homebrew/bin/tesseract',  # Homebrew ARM Mac
-        '/usr/local/bin/tesseract',      # Homebrew Intel Mac
-        '/opt/anaconda3/bin/tesseract',  # Conda
+        "/opt/homebrew/bin/tesseract",  # Homebrew ARM Mac
+        "/usr/local/bin/tesseract",  # Homebrew Intel Mac
+        "/opt/anaconda3/bin/tesseract",  # Conda
     ]
-    
+
     for path in tesseract_paths:
         if os.path.exists(path):
             tesseract_cmd = path
@@ -67,14 +67,14 @@ def scan_receipt(image_bytes):
         exit()
 
     # show transformed image
-    #cv2.imshow("Receipt Transform", imutils.resize(receipt, width=500))
-    #cv2.waitKey(0)
+    # cv2.imshow("Receipt Transform", imutils.resize(receipt, width=500))
+    # cv2.waitKey(0)
 
     options = "--psm 4"
     text = pytesseract.image_to_string(
         cv2.cvtColor(receipt, cv2.COLOR_BGR2RGB), config=options
     )
-    
+
     # define a regular expression that will match line items that include
     # a price component
     pricePattern = r"([0-9]+\.[0-9]+)"
@@ -100,5 +100,5 @@ def scan_receipt(image_bytes):
     print(name)
     print(items)
     print(f"Total: {total}")
-    
+
     return text

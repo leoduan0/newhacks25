@@ -8,14 +8,14 @@ from datetime import datetime
 import pytesseract
 import shutil
 
-tesseract_cmd = shutil.which('tesseract')
+tesseract_cmd = shutil.which("tesseract")
 if not tesseract_cmd:
     # Check common installation paths
     common_paths = [
-        '/opt/homebrew/bin/tesseract',    # Homebrew ARM Mac
-        '/usr/local/bin/tesseract',        # Homebrew Intel Mac
-        '/opt/anaconda3/bin/tesseract',    # Conda
-        '/usr/bin/tesseract',              # Linux/Docker
+        "/opt/homebrew/bin/tesseract",  # Homebrew ARM Mac
+        "/usr/local/bin/tesseract",  # Homebrew Intel Mac
+        "/opt/anaconda3/bin/tesseract",  # Conda
+        "/usr/bin/tesseract",  # Linux/Docker
     ]
     for path in common_paths:
         if os.path.exists(path):
@@ -26,7 +26,9 @@ if tesseract_cmd:
     pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
     print(f"✓ Tesseract configured at: {tesseract_cmd}")
 else:
-    print("✗ WARNING: Tesseract not found! Install with: brew install tesseract (Mac) or apt-get install tesseract-ocr (Linux)")
+    print(
+        "✗ WARNING: Tesseract not found! Install with: brew install tesseract (Mac) or apt-get install tesseract-ocr (Linux)"
+    )
 
 import ocr
 import gemini

@@ -1,5 +1,6 @@
 import database as db
 
+
 def count_categories():
     category_count = {}
     all_rows = db.get_all_rows()
@@ -14,7 +15,7 @@ def count_categories():
     return category_count
 
 
-def sort_by_date(num_entries: int=0):
+def sort_by_date(num_entries: int = 0):
     # Descending
     purchase_by_date = []
     all_rows = db.get_all_rows()
@@ -23,7 +24,7 @@ def sort_by_date(num_entries: int=0):
         entry = {
             "row_id": row["id"],
             "store": row["store"],
-            "date": row["purchase_date"]
+            "date": row["purchase_date"],
         }
 
         if not purchase_by_date:
