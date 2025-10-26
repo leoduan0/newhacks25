@@ -3,19 +3,59 @@ from datetime import datetime
 import os
 import json
 from dotenv import load_dotenv
+import uuid
 
 load_dotenv()
 supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 
-def get_highest_id():
-    response = supabase.table('records').select("id").order('id', desc=True).limit(1).execute()
 
-    if response.data:
-        highest_id = response.data[0]['id']
-        print(f"Highest ID: {highest_id}")
-        return int(highest_id)
-    else:
-        return -1
+def load_from_json(json_text: str):
+    formatted = json.loads(json_text)
+    insert_receipt(
+        merchant_name=formatted["merchant_name"],
+        items=formatted["items"],
+        receipt_type=formatted["type"],
+        total_amount=formatted["total_amount"],
+        purchase_date=formatted["date"]
+    )
+
+
+def get_id():
+    new_id = uuid.uuid1()
+    response = supabase.table("response").select("id").eq("id", new_id).execute()
+
+    if len(response.data) > 0:
+        new_id = uuid.uuid1()
+
+    return new_id
+
+
+def switch_format(receipt_type: str, merchant_name: str, items: list[tuple[str, float]], total_amount: float, purchase_date=None) -> str:
+    item_list = []
+    for item in items:
+        item_dict = {
+            "name": item[0],
+            "cost": item[1],
+            "createdAt": str(datetime.now().isoformat()),
+            "updatedAt": str(datetime.now().isoformat()),
+            "userId": "dc5b034a-d418-4e3f-8069-e7bb21550870",
+        }
+        item_list += item_dict
+
+    formatted = {
+        "store": merchant_name,
+        "category": receipt_type,
+        "imageUrl": "",
+        "address": "",
+        "phone": "",
+        "notes": "",
+        "createdAt": str(datetime.now().isoformat()),
+        "updatedAt": str(datetime.now().isoformat()),
+        "userId": "dc5b034a-d418-4e3f-8069-e7bb21550870",
+        "items": item_list
+    }
+
+    return json.dumps(formatted)
 
 
 def insert_receipt(receipt_type: str, merchant_name: str, items: list[tuple[str, float]], total_amount: float, purchase_date=None):
@@ -26,7 +66,7 @@ def insert_receipt(receipt_type: str, merchant_name: str, items: list[tuple[str,
     """
     try:
         row_data = {
-            "id": get_highest_id() + 1,
+            "id": get_id(),
             "type": receipt_type,
             "merchant_name": merchant_name,
             "items": items,
@@ -58,13 +98,5 @@ def get_row_by_id(row_id: str):
         print(f"Error retrieving data: {e}")
         return None
 
-
-def load_from_json(json_text: str):
-    formatted = json.loads(json_text)
-    insert_receipt(
-        merchant_name=formatted["merchant_name"], 
-        items=formatted["items"],
-        receipt_type=formatted["type"],
-        total_amount=formatted["total_amount"],
-        purchase_date=formatted["date"]
-    )
+def get_all_rows():
+    return supabase.table("records").select("*").execute()
