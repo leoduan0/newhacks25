@@ -1,12 +1,31 @@
-import { mockLogs } from './log'
-import { CategoryTransactionsWeb } from '@/components/CategoryTransactions'
 import PieChart from '@/components/PieChart'
 import { SummaryBox } from '@/components/SummaryBox'
 import { TimeFilters } from '@/components/TimeFilters'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-// adjust path if needed
+export const mockLogs = [
+  {
+    id: '1',
+    store: 'BMO Store',
+    category: 'Bank',
+    date: '2025-10-25',
+    items: [
+      { name: 'Milk', price: 3.5 },
+      { name: 'Bread', price: 2.0 },
+    ],
+  },
+  {
+    id: '2',
+    store: 'SuperMart',
+    category: 'Food',
+    date: '2025-10-24',
+    items: [
+      { name: 'Eggs', price: 5.0 },
+      { name: 'Apples', price: 4.5 },
+    ],
+  },
+]
 
 const allData = {
   '1 week': [
@@ -61,16 +80,6 @@ export default function HomeScreen() {
 
       {/* SummaryBox at bottom left */}
       <SummaryBox totalSpent={totalSpent} totalPurchases={totalPurchases} />
-      <CategoryTransactionsWeb
-        logs={allLogs}
-        categories={[
-          'Food',
-          'Bank',
-          'Entertainment',
-          'Fashion',
-          'Miscellaneuous',
-        ]}
-      />
     </View>
   )
 }

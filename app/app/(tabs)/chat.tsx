@@ -48,7 +48,6 @@ export default function Chat() {
         if (error) throw error
 
         setTransactions(data || [])
-        console.log(data)
       } catch (err) {
         console.error('Error fetching transactions:', err)
       } finally {

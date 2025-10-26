@@ -123,6 +123,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
+  message: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 12,
+  },
   permissionButton: {
     backgroundColor: '#007AFF',
     padding: 12,
