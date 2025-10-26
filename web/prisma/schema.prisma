@@ -15,14 +15,7 @@ enum Category {
   ENTERTAINMENT
   SHOPPING
   UTILITIES
-  HEALTHCARE
-  EDUCATION
-  TRAVEL
-  SUBSCRIPTIONS
-  PERSONAL_CARE
-  RENT
-  INSURANCE
-  INCOME
+  INVOICE
   MISC
 }
 
@@ -36,7 +29,6 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
 
   records Transaction[]
-  Item    Item[]
 
   @@map("users")
 }
@@ -46,8 +38,9 @@ model Transaction {
   store    String
   category Category
   imageUrl String   @map("image_url")
-  address  String   @default("")
-  phone    String   @default("")
+  address  String 
+  phone    String
+  purchaseDate DateTime @map("purchase_date")
 
   notes String?
 
@@ -55,7 +48,7 @@ model Transaction {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   user   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  userId String? @map("user_id")
 
   items Item[] @relation("TransactionItems")
 
@@ -70,10 +63,6 @@ model Item {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String? @map("user_id")
-
   transactions Transaction[] @relation("TransactionItems")
 
   @@map("items")

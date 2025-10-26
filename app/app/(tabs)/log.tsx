@@ -1,6 +1,7 @@
+import { supabase } from '@/utils/supabase'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Animated,
   FlatList,
@@ -10,32 +11,42 @@ import {
   View,
 } from 'react-native'
 
-// Mock data without hardcoded total
-const mockLogs = [
-  {
-    id: '1',
-    store: 'BMO Store',
-    category: 'Bank',
-    date: '2025-10-25',
-    items: [
-      { name: 'Milk', price: 3.5 },
-      { name: 'Bread', price: 2.0 },
-    ],
-  },
-  {
-    id: '2',
-    store: 'SuperMart',
-    category: 'Food',
-    date: '2025-10-24',
-    items: [
-      { name: 'Eggs', price: 5.0 },
-      { name: 'Apples', price: 4.5 },
-    ],
-  },
-]
-
 export default function Log() {
   const router = useRouter()
+  const [transactions, setTransactions] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('records')
+          .select(
+            `
+            id,
+            store,
+            phone,
+            created_at,
+            items (
+              name,
+              cost
+            )
+          `,
+          )
+          .order('created_at', { ascending: false })
+
+        if (error) throw error
+
+        setTransactions(data || [])
+      } catch (err) {
+        console.error('Error fetching transactions:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTransactions()
+  }, [])
 
   const RenderItem = React.memo(({ item }) => {
     const scale = new Animated.Value(1)
@@ -47,8 +58,9 @@ export default function Log() {
       Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start()
     }
 
-    // calculate total dynamically
-    const total = item.items.reduce((sum, i) => sum + i.price, 0)
+    const total = Array.isArray(item.items)
+      ? item.items.reduce((sum, i) => sum + (i.cost ?? 0), 0)
+      : 0
 
     return (
       <Animated.View style={{ transform: [{ scale }] }}>
@@ -74,7 +86,9 @@ export default function Log() {
             </View>
             <View style={styles.row}>
               <Text style={styles.category}>{item.category}</Text>
-              <Text style={styles.date}>{item.date}</Text>
+              <Text style={styles.date}>
+                {new Date(item.created_at).toLocaleDateString()}
+              </Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -82,10 +96,18 @@ export default function Log() {
     )
   })
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={mockLogs}
+        data={transactions}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <RenderItem item={item} />}
         contentContainerStyle={{ paddingBottom: 20 }}
