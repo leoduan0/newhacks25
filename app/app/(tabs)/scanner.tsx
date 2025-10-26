@@ -13,7 +13,7 @@ import {
 } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
-const API_URL = 'http://100.67.3.29:5001/scan'
+const API_URL = 'http://100.67.81.168:5001/scan'
 
 export default function ScannerPage() {
   const [facing, setFacing] = useState<CameraType>('back')
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   controls: {
     position: 'absolute',
-    bottom: 60,
+    bottom: 90,
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',

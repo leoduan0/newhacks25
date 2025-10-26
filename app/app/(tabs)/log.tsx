@@ -29,14 +29,14 @@ export default function Log() {
           id,
           store,
           phone,
-          created_at,
+          purchase_date,
           items (
             name,
             cost
           )
         `,
         )
-        .order('created_at', { ascending: false })
+        .order('purchase_date', { ascending: false })
       if (error) throw error
       setTransactions(data || [])
     } catch (err) {
@@ -56,14 +56,14 @@ export default function Log() {
             id,
             store,
             phone,
-            created_at,
+            purchase_date,
             items (
               name,
               cost
             )
           `,
           )
-          .order('created_at', { ascending: false })
+          .order('purchase_date', { ascending: false })
 
         if (error) throw error
 
@@ -117,7 +117,7 @@ export default function Log() {
             <View style={styles.row}>
               <Text style={styles.category}>{item.category}</Text>
               <Text style={styles.date}>
-                {new Date(item.created_at).toLocaleDateString()}
+                {new Date(item.purchase_date).toLocaleDateString()}
               </Text>
             </View>
           </View>

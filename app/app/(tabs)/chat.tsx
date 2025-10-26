@@ -188,23 +188,25 @@ User text: ${userMessage.text}
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#eef2f7' },
   banner: {
-    padding: 12,
+    padding: 16,
     backgroundColor: '#1a73e8',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  bannerText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  bannerText: { color: '#fff', fontWeight: '600', fontSize: 16, marginTop: 8 },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     padding: 8,
     backgroundColor: '#eef2f7',
+    marginTop: 8,
   },
   clearButton: {
     backgroundColor: '#1a73e8',
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 8,
+    marginTop: 30,
   },
   clearText: { color: '#fff', fontWeight: '600' },
   messageContainer: {
@@ -228,6 +230,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#ccc',
     backgroundColor: '#fff',
+    marginBottom: 80,
   },
   input: {
     flex: 1,
