@@ -108,9 +108,6 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Spending by Category</Text>
-          <Text style={styles.headerTotal}>
-            Total: ${data?.summary?.total_spent?.toFixed(2) || '0.00'}
-          </Text>
         </View>
 
         {/* Pie Chart Section */}
@@ -308,8 +305,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#eef2f7',
   },
   content: {
-    padding: 16,
-    paddingTop: 50,
+    padding: 10,
   },
   loadingContainer: {
     flex: 1,
