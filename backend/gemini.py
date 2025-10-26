@@ -50,3 +50,4 @@ def analyze_receipt(text: str):
     print(response.text)
     my_receipts: Receipt = response.parsed
     return my_receipts
+
